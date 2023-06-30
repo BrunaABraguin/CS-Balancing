@@ -9,11 +9,36 @@ function customerSuccessBalancing(
   customers,
   customerSuccessAway
 ) {
-  /**
-   * ===============================================
-   * =========== Write your solution here ==========
-   * ===============================================
-   */
+  const customerSuccessCountCalls = {};
+  let maxCount = 0;
+  let csIdMax = 0;
+
+  const availableCS = customerSuccess
+    .filter((cs) => !customerSuccessAway.includes(cs.id))
+    .sort((a, b) => a.score - b.score);
+
+  availableCS.forEach((cs) => {
+    customerSuccessCountCalls[cs.id] = 0;
+  });
+
+  customers.forEach((customer) => {
+    const cs = availableCS.find((cs) => customer.score <= cs.score);
+    if (cs) {
+      customerSuccessCountCalls[cs.id]++;
+    }
+  });
+
+  Object.keys(customerSuccessCountCalls).forEach((csId) => {
+    const count = customerSuccessCountCalls[csId];
+    if (count > maxCount) {
+      maxCount = count;
+      csIdMax = parseInt(csId);
+    } else if (count === maxCount) {
+      csIdMax = 0;
+    }
+  });
+
+  return csIdMax;
 }
 
 test("Scenario 1", () => {
@@ -51,7 +76,7 @@ function mapEntities(arr) {
   }));
 }
 
-function arraySeq(count, startAt){
+function arraySeq(count, startAt) {
   return Array.apply(0, Array(count)).map((it, index) => index + startAt);
 }
 
